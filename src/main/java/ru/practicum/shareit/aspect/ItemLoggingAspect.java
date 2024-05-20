@@ -14,22 +14,28 @@ import org.springframework.stereotype.Component;
 public class ItemLoggingAspect {
 
     @Pointcut("execution(* ru.practicum.shareit.item.controller.ItemController.addItem(..))")
-    private void addItemMethod() {}
+    private void addItemMethod() {
+    }
 
     @Pointcut("execution(* ru.practicum.shareit.item.controller.ItemController.getItemById(..))")
-    private void getItemMethod() {}
+    private void getItemMethod() {
+    }
 
     @Pointcut("execution(* ru.practicum.shareit.item.controller.ItemController.getUserItems(..))")
-    private void getUserItemsMethod() {}
+    private void getUserItemsMethod() {
+    }
 
     @Pointcut("execution(* ru.practicum.shareit.item.controller.ItemController.updateItem(..))")
-    private void updateItemMethod() {}
+    private void updateItemMethod() {
+    }
 
     @Pointcut("execution(* ru.practicum.shareit.item.controller.ItemController.deleteItem(..))")
-    private void deleteItemMethod() {}
+    private void deleteItemMethod() {
+    }
 
     @Pointcut("execution(* ru.practicum.shareit.item.controller.ItemController.searchItems(..))")
-    private void searchItemsMethod() {}
+    private void searchItemsMethod() {
+    }
 
     @Around(value = "addItemMethod()")
     public Object aroundAddItemAdvice(ProceedingJoinPoint joinPoint) throws Throwable {

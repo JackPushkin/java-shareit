@@ -14,16 +14,20 @@ import org.springframework.stereotype.Component;
 public class UserLoggingAspect {
 
     @Pointcut("execution(* ru.practicum.shareit.user.controller.UserController.addUser(..))")
-    private void addUserMethod() {}
+    private void addUserMethod() {
+    }
 
     @Pointcut("execution(* ru.practicum.shareit.user.controller.UserController.getUserById(..))")
-    private void getUserMethod() {}
+    private void getUserMethod() {
+    }
 
     @Pointcut("execution(* ru.practicum.shareit.user.controller.UserController.updateUser(..))")
-    private void updateUserMethod() {}
+    private void updateUserMethod() {
+    }
 
     @Pointcut("execution(* ru.practicum.shareit.user.controller.UserController.deleteUser(..))")
-    private void deleteUserMethod() {}
+    private void deleteUserMethod() {
+    }
 
     @Around(value = "addUserMethod()")
     public Object aroundAddUserAdvice(ProceedingJoinPoint joinPoint) throws Throwable {
