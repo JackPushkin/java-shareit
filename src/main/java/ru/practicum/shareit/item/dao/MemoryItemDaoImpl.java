@@ -14,7 +14,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 @Repository
-public class ItemDaoImpl implements ItemDao {
+public class MemoryItemDaoImpl implements ItemDao {
 
     private final Map<Long, Map<Long, Item>> items = new HashMap<>();
     private Long id = 1L;

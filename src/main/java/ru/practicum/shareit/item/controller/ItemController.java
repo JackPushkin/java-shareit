@@ -14,11 +14,11 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.mapper.ItemMapper;
-import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.item.service.ItemService;
 import ru.practicum.shareit.validation.ValidationMarker;
 
 import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Positive;
 import java.util.List;
 
@@ -39,16 +39,16 @@ public class ItemController {
 
     @PostMapping
     @Validated({ValidationMarker.OnCreate.class})
-    public ItemDto addItem(@Valid @RequestBody Item item, @Positive @RequestHeader("X-Sharer-User-Id") Long userId) {
-        return ItemMapper.toItemDto(itemService.addItem(item, userId));
+    public ItemDto addItem(@Valid @RequestBody ItemDto itemDto, @Positive @RequestHeader("X-Sharer-User-Id") Long userId) {
+        return ItemMapper.toItemDto(itemService.addItem(ItemMapper.toItem(itemDto), userId));
     }
 
     @PatchMapping("/{itemId}")
     @Validated({ValidationMarker.OnUpdate.class})
-    public ItemDto updateItem(@Valid @RequestBody Item item,
+    public ItemDto updateItem(@Valid @RequestBody ItemDto itemDto,
                               @Positive @PathVariable Long itemId,
                               @Positive @RequestHeader("X-Sharer-User-Id") Long userId) {
-        return ItemMapper.toItemDto(itemService.updateItem(item, itemId, userId));
+        return ItemMapper.toItemDto(itemService.updateItem(ItemMapper.toItem(itemDto), itemId, userId));
     }
 
     @GetMapping("/{itemId}")
@@ -64,7 +64,7 @@ public class ItemController {
 
     @GetMapping("/search")
     public List<ItemDto> searchItems(@Positive @RequestHeader("X-Sharer-User-Id") Long userId,
-                                     @RequestParam(name = "text", required = false) String text) {
+                                     @NotNull @RequestParam(name = "text", required = false) String text) {
         return ItemMapper.toItemDto(itemService.searchItems(userId, text));
     }
 

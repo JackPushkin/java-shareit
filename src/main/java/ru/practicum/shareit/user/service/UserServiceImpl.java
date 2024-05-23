@@ -3,8 +3,6 @@ package ru.practicum.shareit.user.service;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ru.practicum.shareit.user.dao.UserDao;
-import ru.practicum.shareit.user.dto.UserDto;
-import ru.practicum.shareit.user.mapper.UserMapper;
 import ru.practicum.shareit.user.model.User;
 
 import java.util.List;
@@ -20,30 +18,27 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public UserDto addUser(User user) {
-        return UserMapper.toUserDto(userDao.addUser(user));
+    public User addUser(User user) {
+        return userDao.addUser(user);
     }
 
     @Override
-    public UserDto getUserById(Long userId) {
-        return UserMapper.toUserDto(userDao.getUserById(userId));
+    public User getUserById(Long userId) {
+        return userDao.getUserById(userId);
     }
 
     @Override
-    public List<UserDto> getAllUsers() {
-        return UserMapper.toUserDto(userDao.getAllUsers());
+    public List<User> getAllUsers() {
+        return userDao.getAllUsers();
     }
 
     @Override
-    public UserDto updateUser(User user, Long userId) {
-        User updatedUser = UserMapper.toUser(getUserById(userId));
-        if (user.getEmail() != null) updatedUser.setEmail(user.getEmail());
-        if (user.getName() != null) updatedUser.setName(user.getName());
-        return UserMapper.toUserDto(userDao.updateUser(updatedUser));
+    public User updateUser(User user, Long userId) {
+        return userDao.updateUser(user, userId);
     }
 
     @Override
-    public UserDto deleteUser(Long userId) {
-        return UserMapper.toUserDto(userDao.deleteUser(userId));
+    public User deleteUser(Long userId) {
+        return userDao.deleteUser(userId);
     }
 }
