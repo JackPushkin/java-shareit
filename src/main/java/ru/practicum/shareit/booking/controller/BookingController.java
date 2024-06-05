@@ -27,6 +27,7 @@ public class BookingController {
     public BookingController(BookingService bookingService) {
         this.bookingService = bookingService;
     }
+
     @PostMapping
     @Validated({ ValidationMarker.OnCreate.class })
     public BookingDto addBooking(@Valid @RequestBody ShortBookingDto bookingDto,

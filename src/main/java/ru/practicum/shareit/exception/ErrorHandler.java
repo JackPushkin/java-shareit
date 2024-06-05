@@ -22,7 +22,7 @@ public class ErrorHandler {
 
     @ExceptionHandler
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public ErrorResponse NotAvailableExceptionHandler(NotAvailableException e) {
+    public ErrorResponse notAvailableExceptionHandler(NotAvailableException e) {
         return new ErrorResponse(Map.of("available", e.getMessage()));
     }
 
