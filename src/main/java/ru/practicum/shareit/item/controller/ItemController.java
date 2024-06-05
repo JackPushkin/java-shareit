@@ -1,6 +1,7 @@
 package ru.practicum.shareit.item.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -12,7 +13,10 @@ import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import ru.practicum.shareit.item.dto.CommentDto;
+import ru.practicum.shareit.item.dto.GetItemDto;
 import ru.practicum.shareit.item.dto.ItemDto;
+import ru.practicum.shareit.item.mapper.CommentMapper;
 import ru.practicum.shareit.item.mapper.ItemMapper;
 import ru.practicum.shareit.item.service.ItemService;
 import ru.practicum.shareit.validation.ValidationMarker;
@@ -39,7 +43,8 @@ public class ItemController {
 
     @PostMapping
     @Validated({ValidationMarker.OnCreate.class})
-    public ItemDto addItem(@Valid @RequestBody ItemDto itemDto, @Positive @RequestHeader("X-Sharer-User-Id") Long userId) {
+    public ItemDto addItem(@Valid @RequestBody ItemDto itemDto,
+                           @Positive @RequestHeader("X-Sharer-User-Id") Long userId) {
         return ItemMapper.toItemDto(itemService.addItem(ItemMapper.toItem(itemDto), userId));
     }
 
@@ -52,14 +57,14 @@ public class ItemController {
     }
 
     @GetMapping("/{itemId}")
-    public ItemDto getItemById(@Positive @PathVariable Long itemId,
-                               @Positive @RequestHeader("X-Sharer-User-Id") Long userId) {
-        return ItemMapper.toItemDto(itemService.getItemById(itemId, userId));
+    public GetItemDto getItemById(@Positive @PathVariable Long itemId,
+                                  @Positive @RequestHeader("X-Sharer-User-Id") Long userId) {
+        return itemService.getItemById(itemId, userId);
     }
 
     @GetMapping
-    public List<ItemDto> getUserItems(@Positive @RequestHeader("X-Sharer-User-Id") Long userId) {
-        return ItemMapper.toItemDto(itemService.getUserItems(userId));
+    public List<GetItemDto> getUserItems(@Positive @RequestHeader("X-Sharer-User-Id") Long userId) {
+        return itemService.getUserItems(userId);
     }
 
     @GetMapping("/search")
@@ -70,7 +75,16 @@ public class ItemController {
 
     @DeleteMapping("/{itemId}")
     public ItemDto deleteItem(@Positive @PathVariable Long itemId,
-                              @RequestHeader("X-Sharer-User-Id") Long userId) {
+                              @Positive @RequestHeader("X-Sharer-User-Id") Long userId) {
         return ItemMapper.toItemDto(itemService.deleteItem(itemId, userId));
+    }
+
+    @PostMapping("/{itemId}/comment")
+    @Validated({ ValidationMarker.OnCreate.class })
+    public CommentDto addCommentToItem(@Positive @PathVariable Long itemId,
+                                       @RequestHeader("X-Sharer-User-Id") Long userId,
+                                       @Valid @RequestBody CommentDto commentDto) {
+        return CommentMapper.toCommentDto(
+                itemService.addCommentToItem(itemId, userId, CommentMapper.toComment(commentDto)));
     }
 }

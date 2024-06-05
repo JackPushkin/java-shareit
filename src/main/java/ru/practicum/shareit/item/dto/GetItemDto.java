@@ -5,21 +5,19 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 import ru.practicum.shareit.booking.dto.ShortBookingDto;
-import ru.practicum.shareit.booking.model.Booking;
+import ru.practicum.shareit.item.model.Comment;
 import ru.practicum.shareit.validation.ValidationMarker;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
+import java.util.List;
 
-/**
- * TODO Sprint add-controllers.
- */
 @Getter
 @Setter
 @Builder
 @ToString
-public class ItemDto {
+public class GetItemDto {
 
     private Long id;
 
@@ -33,4 +31,8 @@ public class ItemDto {
 
     @NotNull(groups = { ValidationMarker.OnCreate.class })
     private Boolean available;
+
+    private ShortBookingDto lastBooking;
+    private ShortBookingDto nextBooking;
+    private List<CommentDto> comments;
 }

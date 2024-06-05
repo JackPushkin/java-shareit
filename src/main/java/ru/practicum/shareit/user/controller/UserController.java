@@ -1,6 +1,7 @@
 package ru.practicum.shareit.user.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -43,8 +44,7 @@ public class UserController {
 
     @GetMapping("/{userId}")
     public UserDto getUserById(@Positive @PathVariable Long userId) {
-        User user = userService.getUserById(userId);
-        return UserMapper.toUserDto(user);
+        return UserMapper.toUserDto(userService.getUserById(userId));
     }
 
     @GetMapping

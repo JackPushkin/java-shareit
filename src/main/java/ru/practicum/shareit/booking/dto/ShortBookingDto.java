@@ -4,9 +4,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
-import ru.practicum.shareit.booking.model.BookingStatus;
 import ru.practicum.shareit.item.dto.ItemDto;
-import ru.practicum.shareit.user.dto.UserDto;
 import ru.practicum.shareit.validation.ValidationMarker;
 
 import javax.validation.constraints.Future;
@@ -17,7 +15,7 @@ import java.time.LocalDateTime;
 @Setter
 @Builder
 @ToString
-public class BookingDto {
+public class ShortBookingDto {
 
     private Long id;
 
@@ -29,7 +27,6 @@ public class BookingDto {
     @NotNull(groups = { ValidationMarker.OnCreate.class })
     private LocalDateTime end;
 
-    private ItemDto item;
-    private UserDto booker;
-    private BookingStatus status;
+    private Long itemId;
+    private Long bookerId;
 }
