@@ -4,7 +4,6 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
-import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.validation.ValidationMarker;
 
 import javax.validation.constraints.Future;

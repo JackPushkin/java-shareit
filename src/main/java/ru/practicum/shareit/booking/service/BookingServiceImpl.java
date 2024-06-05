@@ -2,7 +2,6 @@ package ru.practicum.shareit.booking.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import ru.practicum.shareit.booking.dto.BookingDto;
 import ru.practicum.shareit.booking.dto.ShortBookingDto;
 import ru.practicum.shareit.booking.mapper.BookingMapper;
 import ru.practicum.shareit.booking.model.Booking;
@@ -18,7 +17,9 @@ import ru.practicum.shareit.user.repository.UserRepository;
 
 import javax.validation.ConstraintViolationException;
 import java.time.LocalDateTime;
+import java.util.Comparator;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class BookingServiceImpl implements BookingService {
@@ -92,24 +93,39 @@ public class BookingServiceImpl implements BookingService {
 
     @Override
     public List<Booking> getAllBookingsByUserFilteredByState(String state, Long userId) {
-        if (!userRepository.existsById(userId)) {
-            throw new NotFoundException(String.format("User with id=%d not found", userId));
-        }
+        User user = userRepository.findById(userId).orElseThrow(() ->
+                new NotFoundException(String.format("User with id=%d not found", userId)));
         BookingState bookingState = BookingState.valueOf(state);
+        List<Booking> bookings;
         switch (bookingState) {
             case ALL:
-                return bookingRepository.findAllByBookerIdOrderByStartDesc(userId);
+                bookings = bookingRepository.findAllByBookerIdOrderByItemId(userId);
+                break;
             case CURRENT:
-                return bookingRepository.findAllByBookerIdAndStartBeforeAndEndAfterOrderByStartDesc(
+                bookings = bookingRepository.findAllByBookerIdAndStartBeforeAndEndAfterOrderByItemId(
                         userId, LocalDateTime.now(), LocalDateTime.now());
+                break;
             case PAST:
-                return bookingRepository.findAllByBookerIdAndEndBeforeOrderByStartDesc(userId, LocalDateTime.now());
+                bookings = bookingRepository.findAllByBookerIdAndEndBeforeOrderByItemId(
+                        userId, LocalDateTime.now());
+                break;
             case FUTURE:
-                return bookingRepository.findAllByBookerIdAndStartAfterOrderByStartDesc(userId, LocalDateTime.now());
+                bookings = bookingRepository.findAllByBookerIdAndStartAfterOrderByItemId(
+                        userId, LocalDateTime.now());
+                break;
             default:
-                return bookingRepository.findAllByBookerIdAndStatusOrderByStartDesc(
+                bookings = bookingRepository.findAllByBookerIdAndStatusOrderByItemId(
                         userId, BookingStatus.valueOf(bookingState.name()));
         }
+        List<Long> bookingsIds = bookings.stream().map(Booking::getId).collect(Collectors.toList());
+        List<Item> bookingItems = itemRepository.findItemsByBookingsIdInOrderById(bookingsIds);
+        for (int i = 0; i < bookings.size(); i++) {
+            bookings.get(i).setItem(bookingItems.get(i));
+            bookings.get(i).setBooker(user);
+        }
+        return bookings.stream()
+                .sorted(Comparator.comparing(Booking::getStart).reversed().thenComparing(Booking::getId))
+                .collect(Collectors.toList());
     }
 
     @Override
@@ -125,9 +141,11 @@ public class BookingServiceImpl implements BookingService {
                 return bookingRepository.findAllByItemOwnerIdAndStartBeforeAndEndAfterOrderByStartDesc(
                         userId, LocalDateTime.now(), LocalDateTime.now());
             case PAST:
-                return bookingRepository.findAllByItemOwnerIdAndEndBeforeOrderByStartDesc(userId, LocalDateTime.now());
+                return bookingRepository.findAllByItemOwnerIdAndEndBeforeOrderByStartDesc(
+                        userId, LocalDateTime.now());
             case FUTURE:
-                return bookingRepository.findAllByItemOwnerIdAndStartAfterOrderByStartDesc(userId, LocalDateTime.now());
+                return bookingRepository.findAllByItemOwnerIdAndStartAfterOrderByStartDesc(
+                        userId, LocalDateTime.now());
             default:
                 return bookingRepository.findAllByItemOwnerIdAndStatusOrderByStartDesc(
                         userId, BookingStatus.valueOf(bookingState.name()));

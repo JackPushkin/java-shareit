@@ -21,4 +21,6 @@ public interface ItemRepository extends JpaRepository<Item, Long> {
             "or lower(i.name) like concat('%',:keyword,'%'))",
             nativeQuery = true)
     List<Item> searchItems(@Param("keyword") String keyword);
+
+    List<Item> findItemsByBookingsIdInOrderById(List<Long> ids);
 }
