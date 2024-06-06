@@ -3,6 +3,7 @@ package ru.practicum.shareit.booking.service;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import ru.practicum.shareit.booking.dto.BookingTime;
 import ru.practicum.shareit.booking.dto.ShortBookingDto;
 import ru.practicum.shareit.booking.mapper.BookingMapper;
 import ru.practicum.shareit.booking.model.Booking;
@@ -57,6 +58,7 @@ public class BookingServiceImpl implements BookingService {
         User user = userRepository.findById(userId).orElseThrow(() ->
                 new NotFoundException(String.format("User with id=%d not found", userId)));
         Booking booking = BookingMapper.toBooking(bookingDto, item, user, BookingStatus.WAITING);
+        checkBookingTimeIntersection(booking, item.getId());
         item.getBookings().add(booking);
         return bookingRepository.save(booking);
     }
@@ -156,5 +158,21 @@ public class BookingServiceImpl implements BookingService {
                 return bookingRepository.findAllByItemOwnerIdAndStatusOrderByStartDesc(
                         userId, BookingStatus.valueOf(bookingState.name()));
         }
+    }
+
+    private void checkBookingTimeIntersection(Booking booking, Long itemId) {
+        List<BookingTime> bookings = bookingRepository.findAllByItemIdAndStatus(itemId, BookingStatus.APPROVED);
+        boolean isIntersects = bookings.stream().anyMatch(bookingTime -> isBookingTimeIntersects(bookingTime, booking));
+        if (isIntersects) {
+            throw new NotAvailableException("This time is already booked");
+        }
+    }
+
+    private boolean isBookingTimeIntersects(BookingTime b1, Booking b2) {
+        LocalDateTime b1StartTime = b1.getStart();
+        LocalDateTime b2StartTime = b2.getStart();
+        LocalDateTime b1EndTime = b1.getEnd();
+        LocalDateTime b2EndTime = b2.getEnd();
+        return !b2StartTime.isAfter(b1EndTime) && !b2EndTime.isBefore(b1StartTime);
     }
 }
