@@ -5,6 +5,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import ru.practicum.shareit.item.model.Item;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 
@@ -22,5 +23,9 @@ public interface ItemRepository extends JpaRepository<Item, Long> {
             nativeQuery = true)
     List<Item> searchItems(@Param("keyword") String keyword);
 
-    List<Item> findItemsByBookingsIdInOrderById(List<Long> ids);
+    @Query(value = "select i.* " +
+            "from items as i " +
+            "join bookings as b on i.id_item = b.id_item " +
+            "where b.id_booking in (:ids)", nativeQuery = true)
+    List<Item> findItemsByBookingsIds(@Param("ids") Collection<Long> ids);
 }

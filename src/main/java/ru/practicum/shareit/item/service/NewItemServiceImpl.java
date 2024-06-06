@@ -71,7 +71,10 @@ public class NewItemServiceImpl implements ItemService {
             Item item =  itemRepository.findById(itemId).orElseThrow(() ->
                     new NotFoundException(String.format("Item with id=%d not found", itemId)));
             List<Comment> comments = commentRepository.getCommentsByItemIds(List.of(itemId));
-            return ItemMapper.toGetItemDto(item, userId, comments);
+            List<Booking> bookings = new ArrayList<>();
+            if (userId.equals(item.getOwner().getId()))
+                bookings = bookingRepository.findAllByItemIdInAndItemOwnerId(List.of(itemId), userId);
+            return ItemMapper.toGetItemDto(item, userId, comments, bookings);
         } else {
             throw new NotFoundException(String.format("User with id=%d not found", userId));
         }
@@ -86,7 +89,8 @@ public class NewItemServiceImpl implements ItemService {
                     .map(Item::getId)
                     .collect(Collectors.toList());
             List<Comment> comments = commentRepository.getCommentsByItemIds(userItemsIds);
-            return ItemMapper.toGetItemDto(userItems, userId, comments);
+            List<Booking> bookings = bookingRepository.findAllByItemIdInAndItemOwnerId(userItemsIds, userId);
+            return ItemMapper.toGetItemDto(userItems, userId, comments, bookings);
         } else {
             throw new NotFoundException(String.format("User with id=%d not found", userId));
         }

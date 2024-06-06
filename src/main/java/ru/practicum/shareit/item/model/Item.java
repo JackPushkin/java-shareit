@@ -4,12 +4,10 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import ru.practicum.shareit.booking.model.Booking;
 import ru.practicum.shareit.request.model.ItemRequest;
 import ru.practicum.shareit.user.model.User;
 
 import javax.persistence.*;
-import java.util.List;
 
 /**
  * TODO Sprint add-controllers.
@@ -43,12 +41,4 @@ public class Item {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_request")
     private ItemRequest request;
-
-    @OneToMany(mappedBy = "item")
-    private List<Booking> bookings;
-
-    public void addBooking(Booking booking) {
-        this.bookings.add(booking);
-        booking.setItem(this);
-    }
 }

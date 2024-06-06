@@ -2,6 +2,7 @@ package ru.practicum.shareit.item.mapper;
 
 import ru.practicum.shareit.booking.mapper.BookingMapper;
 import ru.practicum.shareit.booking.model.Booking;
+import ru.practicum.shareit.booking.model.BookingStatus;
 import ru.practicum.shareit.item.dto.GetItemDto;
 import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.model.Comment;
@@ -23,30 +24,22 @@ public class ItemMapper {
                 .build();
     }
 
-    public static GetItemDto toGetItemDto(Item item, Long userId, List<Comment> comments) {
-        Booking lastBooking = null;
-        Booking nextBooking = null;
+    public static GetItemDto toGetItemDto(Item item, Long userId, List<Comment> comments, List<Booking> bookings) {
+        Booking lastBooking;
+        Booking nextBooking;
 
-        if (userId.equals(item.getOwner().getId())) {
-            List<Booking> bookings = item.getBookings();
-            lastBooking = bookings.stream()
-                    .filter(booking -> booking.getStart().isBefore(LocalDateTime.now()))
-                    .max(Comparator.comparing(Booking::getStart))
-                    .orElse(null);
-            nextBooking = bookings.stream()
-                    .filter(booking -> booking.getStart().isAfter(LocalDateTime.now()))
-                    .min(Comparator.comparing(Booking::getStart))
-                    .orElse(null);
-
-            //////////////////////////////////////////////////////////////////////////////
-            // Это ЗАГЛУШКА для теста "Item 1 get from user 1 (owner) without comments"
-            // Я не знаю, что этому тесту от меня надо!
-            // PS. Вернее я знаю, что ему надо, но не понимаю, почему ему это надо.
-            if (item.getId().equals(1L) && userId.equals(1L)) {
-                nextBooking = null;
-            }
-            //////////////////////////////////////////////////////////////////////////////
-        }
+        lastBooking = bookings.stream()
+                .filter(booking -> booking.getItem().getId().equals(item.getId()))
+                .filter(booking -> booking.getStart().isBefore(LocalDateTime.now()) &&
+                        booking.getStatus() == BookingStatus.APPROVED)
+                .max(Comparator.comparing(Booking::getStart))
+                .orElse(null);
+        nextBooking = bookings.stream()
+                .filter(booking -> booking.getItem().getId().equals(item.getId()))
+                .filter(booking -> booking.getStart().isAfter(LocalDateTime.now()) &&
+                        booking.getStatus() == BookingStatus.APPROVED)
+                .min(Comparator.comparing(Booking::getStart))
+                .orElse(null);
 
         return GetItemDto.builder()
                 .id(item.getId())
@@ -60,9 +53,9 @@ public class ItemMapper {
                 .build();
     }
 
-    public static List<GetItemDto> toGetItemDto(List<Item> items, Long userId, List<Comment> comments) {
+    public static List<GetItemDto> toGetItemDto(List<Item> items, Long userId, List<Comment> comments, List<Booking> bookings) {
         return items.stream()
-                .map(item -> toGetItemDto(item, userId, comments))
+                .map(item -> toGetItemDto(item, userId, comments, bookings))
                 .collect(Collectors.toList());
     }
 

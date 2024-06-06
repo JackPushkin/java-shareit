@@ -59,7 +59,7 @@ public class BookingServiceImpl implements BookingService {
                 new NotFoundException(String.format("User with id=%d not found", userId)));
         Booking booking = BookingMapper.toBooking(bookingDto, item, user, BookingStatus.WAITING);
         checkBookingTimeIntersection(booking, item.getId());
-        item.getBookings().add(booking);
+//        item.getBookings().add(booking);
         return bookingRepository.save(booking);
     }
 
@@ -125,7 +125,7 @@ public class BookingServiceImpl implements BookingService {
                         userId, BookingStatus.valueOf(bookingState.name()));
         }
         List<Long> bookingsIds = bookings.stream().map(Booking::getId).collect(Collectors.toList());
-        List<Item> bookingItems = itemRepository.findItemsByBookingsIdInOrderById(bookingsIds);
+        List<Item> bookingItems = itemRepository.findItemsByBookingsIds(bookingsIds);
         for (int i = 0; i < bookings.size(); i++) {
             bookings.get(i).setItem(bookingItems.get(i));
             bookings.get(i).setBooker(user);
