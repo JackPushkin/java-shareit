@@ -2,6 +2,7 @@ package ru.practicum.shareit.booking.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.shareit.booking.dto.ShortBookingDto;
 import ru.practicum.shareit.booking.mapper.BookingMapper;
 import ru.practicum.shareit.booking.model.Booking;
@@ -38,6 +39,7 @@ public class BookingServiceImpl implements BookingService {
     }
 
     @Override
+    @Transactional
     public Booking addBooking(ShortBookingDto bookingDto, Long userId) {
         LocalDateTime startTime = bookingDto.getStart();
         LocalDateTime endTime = bookingDto.getEnd();
@@ -60,6 +62,7 @@ public class BookingServiceImpl implements BookingService {
     }
 
     @Override
+    @Transactional
     public Booking updateBookingStatus(Long bookingId, Long userId, String approved) {
         Booking booking = bookingRepository.findById(bookingId).orElseThrow(() ->
                 new NotFoundException(String.format("Booking with id=%d not found", bookingId)));
@@ -78,6 +81,7 @@ public class BookingServiceImpl implements BookingService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public Booking getBookingById(Long bookingId, Long userId) {
         Booking booking = bookingRepository.findById(bookingId).orElseThrow(() ->
                 new NotFoundException(String.format("Booking with id=%d not found", bookingId)));
@@ -92,6 +96,7 @@ public class BookingServiceImpl implements BookingService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<Booking> getAllBookingsByUserFilteredByState(String state, Long userId) {
         User user = userRepository.findById(userId).orElseThrow(() ->
                 new NotFoundException(String.format("User with id=%d not found", userId)));
@@ -129,6 +134,7 @@ public class BookingServiceImpl implements BookingService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<Booking> getAllBookingsByItemsOwnerFilteredByState(String state, Long userId) {
         if (!userRepository.existsById(userId)) {
             throw new NotFoundException(String.format("User with id=%d not found", userId));

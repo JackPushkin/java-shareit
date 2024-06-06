@@ -2,6 +2,7 @@ package ru.practicum.shareit.item.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.shareit.booking.model.Booking;
 import ru.practicum.shareit.booking.model.BookingStatus;
 import ru.practicum.shareit.booking.repository.BookingRepository;
@@ -41,6 +42,7 @@ public class NewItemServiceImpl implements ItemService {
     }
 
     @Override
+    @Transactional
     public Item addItem(Item item, Long userId) {
         User owner = userRepository.findById(userId).orElseThrow(() -> new NotFoundException(
                 String.format("User with id=%d not found", userId)));
@@ -50,6 +52,7 @@ public class NewItemServiceImpl implements ItemService {
     }
 
     @Override
+    @Transactional
     public Item updateItem(Item item, Long itemId, Long userId) {
         if (!userRepository.existsById(userId))
             throw new NotFoundException(String.format("User with id=%d not found", userId));
@@ -62,6 +65,7 @@ public class NewItemServiceImpl implements ItemService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public GetItemDto getItemById(Long itemId, Long userId) {
         if (userRepository.existsById(userId)) {
             Item item =  itemRepository.findById(itemId).orElseThrow(() ->
@@ -74,6 +78,7 @@ public class NewItemServiceImpl implements ItemService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<GetItemDto> getUserItems(Long userId) {
         if (userRepository.existsById(userId)) {
             List<Item> userItems = itemRepository.findAllByOwnerIdOrderByIdAsc(userId);
@@ -88,6 +93,7 @@ public class NewItemServiceImpl implements ItemService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<Item> searchItems(Long userId, String text) {
         List<Item> searchedList = new ArrayList<>();
         if (userRepository.existsById(userId)) {
@@ -101,6 +107,7 @@ public class NewItemServiceImpl implements ItemService {
     }
 
     @Override
+    @Transactional
     public Item deleteItem(Long itemId, Long userId) {
         User user = userRepository.findById(userId).orElseThrow(() ->
                 new NotFoundException(String.format("User with id=%d not found", userId)));
@@ -112,6 +119,7 @@ public class NewItemServiceImpl implements ItemService {
     }
 
     @Override
+    @Transactional
     public Comment addCommentToItem(Long itemId, Long userId, Comment comment) {
         Booking booking = bookingRepository.findByBookerIdAndItemIdAndStatusAndEndBefore(
                 userId, itemId, BookingStatus.APPROVED, LocalDateTime.now()).stream().findFirst().orElseThrow(() ->
