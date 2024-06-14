@@ -4,41 +4,35 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import ru.practicum.shareit.request.model.ItemRequest;
 import ru.practicum.shareit.user.model.User;
 
 import javax.persistence.*;
+import java.time.LocalDateTime;
 
-/**
- * TODO Sprint add-controllers.
- */
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-@Table(name = "items", schema = "public")
-public class Item {
+@Table(name = "comments", schema = "public")
+public class Comment {
 
     @Id
-    @Column(name = "id_item")
+    @Column(name = "id_comment")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false)
-    private String name;
-
     @Column
-    private String description;
-
-    @Column(nullable = false)
-    private Boolean available;
+    private String text;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "id_user")
-    private User owner;
+    @JoinColumn(name = "id_item")
+    private Item item;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "id_request")
-    private ItemRequest request;
+    @JoinColumn(name = "id_author")
+    private User author;
+
+    @Column(name = "creation_date")
+    private LocalDateTime creationDate;
 }

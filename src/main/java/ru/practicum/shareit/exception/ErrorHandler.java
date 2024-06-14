@@ -22,6 +22,12 @@ public class ErrorHandler {
 
     @ExceptionHandler
     @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ErrorResponse notAvailableExceptionHandler(NotAvailableException e) {
+        return new ErrorResponse(Map.of("available", e.getMessage()));
+    }
+
+    @ExceptionHandler
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ErrorResponse validationExceptionHandler(MethodArgumentNotValidException e) {
         ErrorResponse errorResponse = new ErrorResponse(new HashMap<>());
         e.getAllErrors().forEach(error -> {
@@ -42,6 +48,12 @@ public class ErrorHandler {
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     public ErrorResponse unexpectedErrorHandler(RuntimeException e) {
         return new ErrorResponse(Map.of("error", e.getMessage()));
+    }
+
+    @ExceptionHandler
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    public Map<String, String> illegalArgumentExceptionHandler(IllegalArgumentException e) {
+        return Map.of("error", "Unknown state: UNSUPPORTED_STATUS");
     }
 
     @ExceptionHandler

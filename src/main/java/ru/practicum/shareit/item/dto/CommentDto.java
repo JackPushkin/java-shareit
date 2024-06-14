@@ -7,28 +7,21 @@ import lombok.ToString;
 import ru.practicum.shareit.validation.ValidationMarker;
 
 import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
+import java.time.LocalDateTime;
 
-/**
- * TODO Sprint add-controllers.
- */
 @Getter
 @Setter
 @Builder
 @ToString
-public class ItemDto {
+public class CommentDto {
 
     private Long id;
 
     @NotBlank(groups = { ValidationMarker.OnCreate.class })
     @Pattern(regexp = ".*[^ ].*", groups = { ValidationMarker.OnUpdate.class })
-    private String name;
+    private String text;
 
-    @NotBlank(groups = { ValidationMarker.OnCreate.class })
-    @Pattern(regexp = ".*[^ ].*", groups = { ValidationMarker.OnUpdate.class })
-    private String description;
-
-    @NotNull(groups = { ValidationMarker.OnCreate.class })
-    private Boolean available;
+    private String authorName;
+    private LocalDateTime created;
 }
