@@ -8,15 +8,15 @@ import java.util.List;
 
 public interface ItemService {
 
-    Item addItem(Item item, Long userId);
+    Item addItem(Item item, Long userId, Long requestId);
 
     Item updateItem(Item item, Long itemId, Long userId);
 
     GetItemDto getItemById(Long itemId, Long userId);
 
-    List<GetItemDto> getUserItems(Long userId);
+    List<GetItemDto> getUserItems(Long userId, Integer from, Integer size);
 
-    List<Item> searchItems(Long userId, String text);
+    List<Item> searchItems(Long userId, String text, Integer from, Integer size);
 
     Item deleteItem(Long itemId, Long userId);
 

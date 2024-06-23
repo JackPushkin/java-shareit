@@ -9,6 +9,7 @@ import ru.practicum.shareit.validation.ValidationMarker;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
+import javax.validation.constraints.Positive;
 
 /**
  * TODO Sprint add-controllers.
@@ -31,4 +32,7 @@ public class ItemDto {
 
     @NotNull(groups = { ValidationMarker.OnCreate.class })
     private Boolean available;
+
+    @Positive
+    private Long requestId;
 }

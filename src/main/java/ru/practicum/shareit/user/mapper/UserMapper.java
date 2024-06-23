@@ -29,4 +29,10 @@ public class UserMapper {
                 .name(userDto.getName())
                 .build();
     }
+
+    public static List<User> toUser(List<UserDto> userDtos) {
+        return userDtos.stream()
+                .map(UserMapper::toUser)
+                .collect(Collectors.toList());
+    }
 }

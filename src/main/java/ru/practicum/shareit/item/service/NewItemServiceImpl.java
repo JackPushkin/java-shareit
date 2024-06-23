@@ -1,6 +1,7 @@
 package ru.practicum.shareit.item.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.shareit.booking.model.Booking;
@@ -14,6 +15,8 @@ import ru.practicum.shareit.item.model.Comment;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.item.repository.CommentRepository;
 import ru.practicum.shareit.item.repository.ItemRepository;
+import ru.practicum.shareit.request.model.ItemRequest;
+import ru.practicum.shareit.request.repository.ItemRequestRepository;
 import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.user.repository.UserRepository;
 
@@ -27,27 +30,34 @@ public class NewItemServiceImpl implements ItemService {
 
     private final ItemRepository itemRepository;
     private final UserRepository userRepository;
+    private final ItemRequestRepository requestRepository;
     private final CommentRepository commentRepository;
     private final BookingRepository bookingRepository;
 
     @Autowired
     public NewItemServiceImpl(ItemRepository itemRepository,
-                              UserRepository userRepository,
+                              UserRepository userRepository, ItemRequestRepository requestRepository,
                               CommentRepository commentRepository,
                               BookingRepository bookingRepository) {
         this.itemRepository = itemRepository;
         this.userRepository = userRepository;
+        this.requestRepository = requestRepository;
         this.commentRepository = commentRepository;
         this.bookingRepository = bookingRepository;
     }
 
     @Override
     @Transactional
-    public Item addItem(Item item, Long userId) {
-        User owner = userRepository.findById(userId).orElseThrow(() -> new NotFoundException(
-                String.format("User with id=%d not found", userId)));
+    public Item addItem(Item item, Long userId, Long requestId) {
+        User owner = userRepository.findById(userId).orElseThrow(() ->
+                new NotFoundException(String.format("User with id=%d not found", userId)));
         owner.addItem(item);
         item.setOwner(owner);
+        if (requestId != null) {
+            ItemRequest request = requestRepository.findById(requestId).orElseThrow(() ->
+                    new NotFoundException(String.format("Request with id=%d not found", requestId)));
+            item.setRequest(request);
+        }
         return itemRepository.save(item);
     }
 
@@ -74,7 +84,7 @@ public class NewItemServiceImpl implements ItemService {
             List<Booking> bookings = new ArrayList<>();
             if (userId.equals(item.getOwner().getId()))
                 bookings = bookingRepository.findAllByItemIdInAndItemOwnerId(List.of(itemId), userId);
-            return ItemMapper.toGetItemDto(item, userId, comments, bookings);
+            return ItemMapper.toGetItemDto(item, comments, bookings);
         } else {
             throw new NotFoundException(String.format("User with id=%d not found", userId));
         }
@@ -82,15 +92,17 @@ public class NewItemServiceImpl implements ItemService {
 
     @Override
     @Transactional(readOnly = true)
-    public List<GetItemDto> getUserItems(Long userId) {
+    public List<GetItemDto> getUserItems(Long userId, Integer from, Integer size) {
+        size = size == null ? Integer.MAX_VALUE : size;
         if (userRepository.existsById(userId)) {
-            List<Item> userItems = itemRepository.findAllByOwnerIdOrderByIdAsc(userId);
+            List<Item> userItems = itemRepository.findAllByOwnerIdOrderByIdAsc(userId,
+                    PageRequest.of(from / size, size)).getContent();
             List<Long> userItemsIds = userItems.stream()
                     .map(Item::getId)
                     .collect(Collectors.toList());
             List<Comment> comments = commentRepository.getCommentsByItemIds(userItemsIds);
             List<Booking> bookings = bookingRepository.findAllByItemIdInAndItemOwnerId(userItemsIds, userId);
-            return ItemMapper.toGetItemDto(userItems, userId, comments, bookings);
+            return ItemMapper.toGetItemDto(userItems, comments, bookings);
         } else {
             throw new NotFoundException(String.format("User with id=%d not found", userId));
         }
@@ -98,11 +110,13 @@ public class NewItemServiceImpl implements ItemService {
 
     @Override
     @Transactional(readOnly = true)
-    public List<Item> searchItems(Long userId, String text) {
+    public List<Item> searchItems(Long userId, String text, Integer from, Integer size) {
+        size = size == null ? Integer.MAX_VALUE : size;
         List<Item> searchedList = new ArrayList<>();
         if (userRepository.existsById(userId)) {
             if (!text.isEmpty()) {
-                searchedList = itemRepository.searchItems(text.toLowerCase());
+                searchedList = itemRepository.searchItems(text.toLowerCase(),
+                        PageRequest.of(from / size, size)).getContent();
             }
         } else {
             throw new NotFoundException(String.format("User with id=%d not found", userId));

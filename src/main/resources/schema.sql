@@ -13,6 +13,7 @@ CREATE TABLE IF NOT EXISTS users (
 CREATE TABLE IF NOT EXISTS requests (
     id_request SERIAL PRIMARY KEY,
     description VARCHAR,
+    creation_date TIMESTAMP NOT NULL,
     id_user INTEGER REFERENCES users (id_user)
 );
 
