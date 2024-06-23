@@ -235,7 +235,7 @@ public class UserControllerTest {
 
     @Test
     public void updateUserWithIncorrectIdTest() throws Exception {
-        // Create user with blank name
+        // Create user with incorrect id
         long incorrectId = -100;
         UserDto userDto = getUser(incorrectId);
         // Check endpoint
@@ -245,7 +245,7 @@ public class UserControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON))
                 .andDo(MockMvcResultHandlers.print())
-                .andExpect(status().is(500));
+                .andExpect(status().is(400));
     }
 
     @Test
