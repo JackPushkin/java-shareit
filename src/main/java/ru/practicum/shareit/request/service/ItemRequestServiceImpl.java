@@ -68,7 +68,6 @@ public class ItemRequestServiceImpl implements ItemRequestService {
     @Override
     @Transactional(readOnly = true)
     public List<GetItemRequestDto> getAllAnotherUsersItemRequests(Long userId, Integer from, Integer size) {
-        size = size == null ? Integer.MAX_VALUE : size;
         userRepository.findById(userId).orElseThrow(() ->
                 new NotFoundException(String.format("User id=%d not found", userId)));
         List<ItemRequest> itemRequests =

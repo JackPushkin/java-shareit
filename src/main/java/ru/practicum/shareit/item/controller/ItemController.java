@@ -57,7 +57,7 @@ public class ItemController {
     public List<GetItemDto> getUserItems(
             @Positive @RequestHeader("X-Sharer-User-Id") Long userId,
             @Min(0) @RequestParam(value = "from", defaultValue = "0") Integer from,
-            @Positive @RequestParam(value = "size", required = false) Integer size) {
+            @Positive @RequestParam(value = "size", defaultValue = "10") Integer size) {
         return itemService.getUserItems(userId, from, size);
     }
 
@@ -65,7 +65,7 @@ public class ItemController {
     public List<ItemDto> searchItems(@Positive @RequestHeader("X-Sharer-User-Id") Long userId,
                                      @NotNull @RequestParam(name = "text", required = false) String text,
                                      @Min(0) @RequestParam(value = "from", defaultValue = "0") Integer from,
-                                     @Positive @RequestParam(value = "size", required = false) Integer size) {
+                                     @Positive @RequestParam(value = "size", defaultValue = "10") Integer size) {
         return ItemMapper.toItemDto(itemService.searchItems(userId, text, from, size));
     }
 

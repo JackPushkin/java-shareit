@@ -51,7 +51,7 @@ public class ItemRequestController {
     public List<GetItemRequestDto> getAllAnotherUsersItemRequests(
             @Positive @RequestHeader("X-Sharer-User-Id") Long userId,
             @Min(0) @RequestParam(value = "from", defaultValue = "0") Integer from,
-            @Positive @RequestParam(value = "size", required = false) Integer size) {
+            @Positive @RequestParam(value = "size", defaultValue = "10") Integer size) {
         return itemRequestService.getAllAnotherUsersItemRequests(userId, from, size);
     }
 }

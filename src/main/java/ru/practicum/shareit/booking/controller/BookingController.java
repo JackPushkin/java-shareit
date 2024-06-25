@@ -53,7 +53,7 @@ public class BookingController {
     public List<BookingDto> getAllBookingsByUserFilteredByState(
             @RequestParam(value = "state", defaultValue = "ALL") String state,
             @Min(0) @RequestParam(value = "from", defaultValue = "0") Integer from,
-            @Positive @RequestParam(value = "size", required = false) Integer size,
+            @Positive @RequestParam(value = "size", defaultValue = "10") Integer size,
             @Positive @RequestHeader("X-Sharer-User-Id") Long userId) {
         return BookingMapper.toBookingDto(
                 bookingService.getAllBookingsByUserFilteredByState(state, userId, from, size));
@@ -63,7 +63,7 @@ public class BookingController {
     public List<BookingDto> getAllBookingsByItemsOwnerFilteredByState(
             @RequestParam(value = "state", defaultValue = "ALL") String state,
             @Min(0) @RequestParam(value = "from", defaultValue = "0") Integer from,
-            @Positive @RequestParam(value = "size", required = false) Integer size,
+            @Positive @RequestParam(value = "size", defaultValue = "10") Integer size,
             @Positive @RequestHeader("X-Sharer-User-Id") Long userId) {
         return BookingMapper.toBookingDto(bookingService.getAllBookingsByItemsOwnerFilteredByState(state, userId, from, size));
     }

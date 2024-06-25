@@ -100,7 +100,6 @@ public class BookingServiceImpl implements BookingService {
     @Override
     @Transactional(readOnly = true)
     public List<Booking> getAllBookingsByUserFilteredByState(String state, Long userId, Integer from, Integer size) {
-        size = size == null ? Integer.MAX_VALUE : size;
         User user = userRepository.findById(userId).orElseThrow(() ->
                 new NotFoundException(String.format("User with id=%d not found", userId)));
         BookingState bookingState = BookingState.valueOf(state);
@@ -143,7 +142,6 @@ public class BookingServiceImpl implements BookingService {
     @Transactional(readOnly = true)
     public List<Booking> getAllBookingsByItemsOwnerFilteredByState(String state, Long userId,
                                                                    Integer from, Integer size) {
-        size = size == null ? Integer.MAX_VALUE : size;
         if (!userRepository.existsById(userId))
             throw new NotFoundException(String.format("User with id=%d not found", userId));
         BookingState bookingState = BookingState.valueOf(state);

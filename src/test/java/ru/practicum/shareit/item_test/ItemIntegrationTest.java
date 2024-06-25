@@ -242,11 +242,6 @@ public class ItemIntegrationTest {
         // Check results
         assertThat(items4.size(), equalTo(1));
         assertThat(items4.get(0).getId(), equalTo(createdItemId1));
-
-        // Search items with size == null and text == "Item"
-        List<Item> items5 = itemService.searchItems(itemOwnerId, "Item", 0, null);
-        // Check results
-        assertThat(items5.size(), equalTo(3));
     }
 
     @Test

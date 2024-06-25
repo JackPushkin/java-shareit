@@ -93,7 +93,6 @@ public class NewItemServiceImpl implements ItemService {
     @Override
     @Transactional(readOnly = true)
     public List<GetItemDto> getUserItems(Long userId, Integer from, Integer size) {
-        size = size == null ? Integer.MAX_VALUE : size;
         if (userRepository.existsById(userId)) {
             List<Item> userItems = itemRepository.findAllByOwnerIdOrderByIdAsc(userId,
                     PageRequest.of(from / size, size)).getContent();
@@ -111,7 +110,6 @@ public class NewItemServiceImpl implements ItemService {
     @Override
     @Transactional(readOnly = true)
     public List<Item> searchItems(Long userId, String text, Integer from, Integer size) {
-        size = size == null ? Integer.MAX_VALUE : size;
         List<Item> searchedList = new ArrayList<>();
         if (userRepository.existsById(userId)) {
             if (!text.isEmpty()) {
