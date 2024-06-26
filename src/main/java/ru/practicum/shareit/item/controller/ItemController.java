@@ -12,6 +12,7 @@ import ru.practicum.shareit.item.service.ItemService;
 import ru.practicum.shareit.validation.ValidationMarker;
 
 import javax.validation.Valid;
+import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Positive;
 import java.util.List;
@@ -35,7 +36,7 @@ public class ItemController {
     @Validated({ValidationMarker.OnCreate.class})
     public ItemDto addItem(@Valid @RequestBody ItemDto itemDto,
                            @Positive @RequestHeader("X-Sharer-User-Id") Long userId) {
-        return ItemMapper.toItemDto(itemService.addItem(ItemMapper.toItem(itemDto), userId));
+        return ItemMapper.toItemDto(itemService.addItem(ItemMapper.toItem(itemDto), userId, itemDto.getRequestId()));
     }
 
     @PatchMapping("/{itemId}")
@@ -53,14 +54,19 @@ public class ItemController {
     }
 
     @GetMapping
-    public List<GetItemDto> getUserItems(@Positive @RequestHeader("X-Sharer-User-Id") Long userId) {
-        return itemService.getUserItems(userId);
+    public List<GetItemDto> getUserItems(
+            @Positive @RequestHeader("X-Sharer-User-Id") Long userId,
+            @Min(0) @RequestParam(value = "from", defaultValue = "0") Integer from,
+            @Positive @RequestParam(value = "size", defaultValue = "10") Integer size) {
+        return itemService.getUserItems(userId, from, size);
     }
 
     @GetMapping("/search")
     public List<ItemDto> searchItems(@Positive @RequestHeader("X-Sharer-User-Id") Long userId,
-                                     @NotNull @RequestParam(name = "text", required = false) String text) {
-        return ItemMapper.toItemDto(itemService.searchItems(userId, text));
+                                     @NotNull @RequestParam(name = "text", required = false) String text,
+                                     @Min(0) @RequestParam(value = "from", defaultValue = "0") Integer from,
+                                     @Positive @RequestParam(value = "size", defaultValue = "10") Integer size) {
+        return ItemMapper.toItemDto(itemService.searchItems(userId, text, from, size));
     }
 
     @DeleteMapping("/{itemId}")

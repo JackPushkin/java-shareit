@@ -4,6 +4,7 @@ import ru.practicum.shareit.booking.mapper.BookingMapper;
 import ru.practicum.shareit.booking.model.Booking;
 import ru.practicum.shareit.booking.model.BookingStatus;
 import ru.practicum.shareit.item.dto.GetItemDto;
+import ru.practicum.shareit.item.dto.GetItemRequestItemDto;
 import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.model.Comment;
 import ru.practicum.shareit.item.model.Item;
@@ -15,16 +16,33 @@ import java.util.stream.Collectors;
 
 public class ItemMapper {
 
+    public static GetItemRequestItemDto toGetItemRequestItemDto(Item item) {
+        return GetItemRequestItemDto.builder()
+                .id(item.getId())
+                .name(item.getName())
+                .description(item.getDescription())
+                .requestId(item.getRequest().getId())
+                .available(item.getAvailable())
+                .build();
+    }
+
+    public static List<GetItemRequestItemDto> toGetItemRequestItemDto(List<Item> items) {
+        return items.stream()
+                .map(ItemMapper::toGetItemRequestItemDto)
+                .collect(Collectors.toList());
+    }
+
     public static ItemDto toItemDto(Item item) {
         return ItemDto.builder()
                 .id(item.getId())
                 .name(item.getName())
                 .description(item.getDescription())
                 .available(item.getAvailable())
+                .requestId(item.getRequest() != null ? item.getRequest().getId() : null)
                 .build();
     }
 
-    public static GetItemDto toGetItemDto(Item item, Long userId, List<Comment> comments, List<Booking> bookings) {
+    public static GetItemDto toGetItemDto(Item item, List<Comment> comments, List<Booking> bookings) {
         Booking lastBooking;
         Booking nextBooking;
 
@@ -53,9 +71,9 @@ public class ItemMapper {
                 .build();
     }
 
-    public static List<GetItemDto> toGetItemDto(List<Item> items, Long userId, List<Comment> comments, List<Booking> bookings) {
+    public static List<GetItemDto> toGetItemDto(List<Item> items, List<Comment> comments, List<Booking> bookings) {
         return items.stream()
-                .map(item -> toGetItemDto(item, userId, comments, bookings))
+                .map(item -> toGetItemDto(item, comments, bookings))
                 .collect(Collectors.toList());
     }
 
@@ -67,9 +85,16 @@ public class ItemMapper {
 
     public static Item toItem(ItemDto itemDto) {
         return Item.builder()
+                .id(itemDto.getId())
                 .name(itemDto.getName())
                 .description(itemDto.getDescription())
                 .available(itemDto.getAvailable())
                 .build();
+    }
+
+    public static List<Item> toItem(List<ItemDto> itemDtos) {
+        return itemDtos.stream()
+                .map(ItemMapper::toItem)
+                .collect(Collectors.toList());
     }
 }

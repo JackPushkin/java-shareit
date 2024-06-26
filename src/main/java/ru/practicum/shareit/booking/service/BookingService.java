@@ -11,9 +11,9 @@ public interface BookingService {
 
     Booking updateBookingStatus(Long bookingId, Long userId, String approved);
 
-    List<Booking> getAllBookingsByUserFilteredByState(String state, Long userId);
+    List<Booking> getAllBookingsByUserFilteredByState(String state, Long userId, Integer from, Integer size);
 
     Booking getBookingById(Long bookingId, Long userId);
 
-    List<Booking> getAllBookingsByItemsOwnerFilteredByState(String state, Long userId);
+    List<Booking> getAllBookingsByItemsOwnerFilteredByState(String state, Long userId, Integer from, Integer size);
 }

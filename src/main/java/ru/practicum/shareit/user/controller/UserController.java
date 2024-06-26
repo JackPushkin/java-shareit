@@ -45,7 +45,8 @@ public class UserController {
 
     @PatchMapping("/{userId}")
     @Validated({ ValidationMarker.OnUpdate.class })
-    public UserDto updateUser(@Valid @RequestBody UserDto userDto, @Positive @PathVariable Long userId) {
+    public UserDto updateUser(@Valid @RequestBody UserDto userDto,
+                              @Positive(groups = {ValidationMarker.OnUpdate.class}) @PathVariable Long userId) {
         return UserMapper.toUserDto(userService.updateUser(UserMapper.toUser(userDto), userId));
     }
 

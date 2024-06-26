@@ -4,11 +4,10 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.user.model.User;
 
 import javax.persistence.*;
-import java.util.List;
+import java.time.LocalDateTime;
 
 /**
  * TODO Sprint add-item-requests.
@@ -33,6 +32,6 @@ public class ItemRequest {
     @JoinColumn(name = "id_user")
     private User requestor;
 
-    @OneToMany(mappedBy = "request")
-    private List<Item> items;
+    @Column(name = "creation_date", nullable = false)
+    private LocalDateTime created;
 }

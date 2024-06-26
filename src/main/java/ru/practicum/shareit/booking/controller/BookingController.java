@@ -10,6 +10,7 @@ import ru.practicum.shareit.booking.service.BookingService;
 import ru.practicum.shareit.validation.ValidationMarker;
 
 import javax.validation.Valid;
+import javax.validation.constraints.Min;
 import javax.validation.constraints.Positive;
 import java.util.List;
 
@@ -51,14 +52,19 @@ public class BookingController {
     @GetMapping
     public List<BookingDto> getAllBookingsByUserFilteredByState(
             @RequestParam(value = "state", defaultValue = "ALL") String state,
+            @Min(0) @RequestParam(value = "from", defaultValue = "0") Integer from,
+            @Positive @RequestParam(value = "size", defaultValue = "10") Integer size,
             @Positive @RequestHeader("X-Sharer-User-Id") Long userId) {
-        return BookingMapper.toBookingDto(bookingService.getAllBookingsByUserFilteredByState(state, userId));
+        return BookingMapper.toBookingDto(
+                bookingService.getAllBookingsByUserFilteredByState(state, userId, from, size));
     }
 
     @GetMapping("/owner")
     public List<BookingDto> getAllBookingsByItemsOwnerFilteredByState(
             @RequestParam(value = "state", defaultValue = "ALL") String state,
+            @Min(0) @RequestParam(value = "from", defaultValue = "0") Integer from,
+            @Positive @RequestParam(value = "size", defaultValue = "10") Integer size,
             @Positive @RequestHeader("X-Sharer-User-Id") Long userId) {
-        return BookingMapper.toBookingDto(bookingService.getAllBookingsByItemsOwnerFilteredByState(state, userId));
+        return BookingMapper.toBookingDto(bookingService.getAllBookingsByItemsOwnerFilteredByState(state, userId, from, size));
     }
 }
