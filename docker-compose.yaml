@@ -3,6 +3,7 @@ version: '3.8'
 services:
   postgresql:
     image: postgres:13.7-alpine
+    container_name: shareit-db
     ports:
       - "5433:5432"
     volumes:
@@ -11,11 +12,27 @@ services:
       - POSTGRES_DB=shareit
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=postgres
+    healthcheck:
+      test: pg_isready -q -d $$POSTGRES_DB -U $$POSTGRES_USER
+      timeout: 5s
+      interval: 5s
+      retries: 10
+
+  shareit-gateway:
+    build: ./gateway
+    container_name: shareit-gateway
+    ports:
+      - "8080:8080"
+      - "8081:8081"
+    environment:
+      - SERVER_URL=http://shareit-server:9090
 
   shareit-server:
     build: ./server
+    container_name: shareit-server
     ports:
       - "9090:9090"
+      - "9091:9091"
     depends_on:
       - postgresql
     environment:
@@ -24,14 +41,3 @@ services:
       - POSTGRES_PASSWORD=postgres
       - DB_HOST=postgresql
       - DB_PORT=5432
-
-
-  shareit-gateway:
-    build: ./gateway
-    ports:
-      - "8080:8080"
-    depends_on:
-      - shareit-server
-    environment:
-      - SERVER_HOST=shareit-server
-      - SERVER_PORT=9090
