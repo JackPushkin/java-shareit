@@ -10,7 +10,6 @@ import java.util.List;
 @Getter
 @Builder
 public class GetItemRequestDto {
-
     private Long id;
     private LocalDateTime created;
     private String description;
