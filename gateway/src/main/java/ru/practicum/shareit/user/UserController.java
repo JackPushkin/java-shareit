@@ -48,8 +48,9 @@ public class UserController {
 
     @PatchMapping("/{userId}")
     @Validated({ ValidationMarker.OnUpdate.class })
-    public ResponseEntity<Object> updateUser(@Valid @RequestBody UserDto userDto,
-                              @Positive(groups = {ValidationMarker.OnUpdate.class}) @PathVariable Long userId) {
+    public ResponseEntity<Object> updateUser(
+            @Valid @RequestBody UserDto userDto,
+            @Positive(groups = {ValidationMarker.OnUpdate.class}) @PathVariable Long userId) {
         log.info("Update user with id={}", userId);
         return userClient.updateUser(userId, userDto);
     }
