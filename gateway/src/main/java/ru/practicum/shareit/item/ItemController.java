@@ -48,6 +48,7 @@ public class ItemController {
     public ResponseEntity<Object> getItemById(
             @Positive @PathVariable Long itemId,
             @Positive @RequestHeader("X-Sharer-User-Id") Long userId) {
+        log.info("Get item with id={}", itemId);
         return itemClient.getItemById(userId, itemId);
     }
 
@@ -56,6 +57,7 @@ public class ItemController {
             @Positive @RequestHeader("X-Sharer-User-Id") Long userId,
             @Min(0) @RequestParam(value = "from", defaultValue = "0") Integer from,
             @Positive @RequestParam(value = "size", defaultValue = "10") Integer size) {
+        log.info("Get items by user with id={}. Parameters: from={}, size={}", userId, from, size);
         return itemClient.getUserItems(userId, from, size);
     }
 
@@ -65,6 +67,7 @@ public class ItemController {
             @NotNull @RequestParam(value = "text", required = false) String text,
             @Min(0) @RequestParam(value = "from", defaultValue = "0") Integer from,
             @Positive @RequestParam(value = "size", defaultValue = "10") Integer size) {
+        log.info("Get items with parameters: text={}, from={}, size={}", text, from, size);
         return itemClient.searchItems(userId, text, from, size);
     }
 
@@ -72,6 +75,7 @@ public class ItemController {
     public ResponseEntity<Object> deleteItem(
             @Positive @PathVariable Long itemId,
             @Positive @RequestHeader("X-Sharer-User-Id") Long userId) {
+        log.info("Delete item with id={}", itemId);
         return itemClient.deleteItem(userId, itemId);
     }
 
@@ -81,6 +85,7 @@ public class ItemController {
             @Positive(groups = {ValidationMarker.OnCreate.class}) @PathVariable Long itemId,
             @Positive(groups = {ValidationMarker.OnCreate.class}) @RequestHeader("X-Sharer-User-Id") Long userId,
             @Valid @RequestBody CommentDto commentDto) {
+        log.info("Add comment to item with id={} by user with id={}", itemId, userId);
         return itemClient.addCommentToItem(userId, itemId, commentDto);
     }
 }

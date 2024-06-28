@@ -1,23 +1,14 @@
 package ru.practicum.shareit.booking.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.shareit.booking.dto.BookingDto;
 import ru.practicum.shareit.booking.dto.ShortBookingDto;
 import ru.practicum.shareit.booking.mapper.BookingMapper;
 import ru.practicum.shareit.booking.service.BookingService;
-import ru.practicum.shareit.validation.ValidationMarker;
 
-import javax.validation.Valid;
-import javax.validation.constraints.Min;
-import javax.validation.constraints.Positive;
 import java.util.List;
 
-/**
- * TODO Sprint add-bookings.
- */
-@Validated
 @RestController
 @RequestMapping(path = "/bookings")
 public class BookingController {
@@ -30,31 +21,33 @@ public class BookingController {
     }
 
     @PostMapping
-    @Validated({ ValidationMarker.OnCreate.class })
-    public BookingDto addBooking(@Valid @RequestBody ShortBookingDto bookingDto,
-                                 @Positive @RequestHeader("X-Sharer-User-Id") Long userId) {
+    public BookingDto addBooking(
+            @RequestBody ShortBookingDto bookingDto,
+            @RequestHeader("X-Sharer-User-Id") Long userId) {
         return BookingMapper.toBookingDto(bookingService.addBooking(bookingDto, userId));
     }
 
     @PatchMapping("/{bookingId}")
-    public BookingDto updateBookingStatus(@Positive @PathVariable Long bookingId,
-                                          @Positive @RequestHeader("X-Sharer-User-Id") Long userId,
-                                          @RequestParam("approved") String approved) {
+    public BookingDto updateBookingStatus(
+            @PathVariable Long bookingId,
+            @RequestHeader("X-Sharer-User-Id") Long userId,
+            @RequestParam("approved") String approved) {
         return BookingMapper.toBookingDto(bookingService.updateBookingStatus(bookingId, userId, approved));
     }
 
     @GetMapping("/{bookingId}")
-    public BookingDto getBookingById(@Positive @PathVariable Long bookingId,
-                                     @Positive @RequestHeader("X-Sharer-User-Id") Long userId) {
+    public BookingDto getBookingById(
+            @PathVariable Long bookingId,
+            @RequestHeader("X-Sharer-User-Id") Long userId) {
         return BookingMapper.toBookingDto(bookingService.getBookingById(bookingId, userId));
     }
 
     @GetMapping
     public List<BookingDto> getAllBookingsByUserFilteredByState(
             @RequestParam(value = "state", defaultValue = "ALL") String state,
-            @Min(0) @RequestParam(value = "from", defaultValue = "0") Integer from,
-            @Positive @RequestParam(value = "size", defaultValue = "10") Integer size,
-            @Positive @RequestHeader("X-Sharer-User-Id") Long userId) {
+            @RequestParam(value = "from", defaultValue = "0") Integer from,
+            @RequestParam(value = "size", defaultValue = "10") Integer size,
+            @RequestHeader("X-Sharer-User-Id") Long userId) {
         return BookingMapper.toBookingDto(
                 bookingService.getAllBookingsByUserFilteredByState(state, userId, from, size));
     }
@@ -62,9 +55,10 @@ public class BookingController {
     @GetMapping("/owner")
     public List<BookingDto> getAllBookingsByItemsOwnerFilteredByState(
             @RequestParam(value = "state", defaultValue = "ALL") String state,
-            @Min(0) @RequestParam(value = "from", defaultValue = "0") Integer from,
-            @Positive @RequestParam(value = "size", defaultValue = "10") Integer size,
-            @Positive @RequestHeader("X-Sharer-User-Id") Long userId) {
-        return BookingMapper.toBookingDto(bookingService.getAllBookingsByItemsOwnerFilteredByState(state, userId, from, size));
+            @RequestParam(value = "from", defaultValue = "0") Integer from,
+            @RequestParam(value = "size", defaultValue = "10") Integer size,
+            @RequestHeader("X-Sharer-User-Id") Long userId) {
+        return BookingMapper.toBookingDto(
+                bookingService.getAllBookingsByItemsOwnerFilteredByState(state, userId, from, size));
     }
 }
