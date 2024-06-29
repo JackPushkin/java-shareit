@@ -16,7 +16,6 @@ import ru.practicum.shareit.user.model.User;
 
 import javax.persistence.EntityManager;
 import javax.persistence.TypedQuery;
-import javax.validation.ConstraintViolationException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -65,7 +64,7 @@ public class BookingIntegrationTest {
         // Try to add booking with start after end
         Booking newBookingWithIncorrectStart =
                 createBooking("2040-01-01 | 10:00:00", "2035-01-01 | 12:00:00", item, booker);
-        assertThrows(ConstraintViolationException.class, () ->
+        assertThrows(NotAvailableException.class, () ->
                 bookingService.addBooking(BookingMapper.toShortBookingDto(newBookingWithIncorrectStart), bookerId));
 
         // Try to add booking with incorrect item id

@@ -6,7 +6,6 @@ import lombok.Getter;
 @Getter
 @Builder
 public class GetItemRequestItemDto {
-
     private Long id;
     private String name;
     private String description;

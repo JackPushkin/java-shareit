@@ -13,20 +13,10 @@ import java.util.List;
 @Builder
 @ToString
 public class GetItemDto {
-
     private Long id;
-
-//    @NotBlank(groups = { ValidationMarker.OnCreate.class })
-//    @Pattern(regexp = ".*[^ ].*", groups = { ValidationMarker.OnUpdate.class })
     private String name;
-
-//    @NotBlank(groups = { ValidationMarker.OnCreate.class })
-//    @Pattern(regexp = ".*[^ ].*", groups = { ValidationMarker.OnUpdate.class })
     private String description;
-
-//    @NotNull(groups = { ValidationMarker.OnCreate.class })
     private Boolean available;
-
     private ShortBookingDto lastBooking;
     private ShortBookingDto nextBooking;
     private List<CommentDto> comments;

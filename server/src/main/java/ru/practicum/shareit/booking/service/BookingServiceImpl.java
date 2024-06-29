@@ -18,7 +18,6 @@ import ru.practicum.shareit.item.repository.ItemRepository;
 import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.user.repository.UserRepository;
 
-import javax.validation.ConstraintViolationException;
 import java.time.LocalDateTime;
 import java.util.Comparator;
 import java.util.List;
@@ -46,7 +45,7 @@ public class BookingServiceImpl implements BookingService {
         LocalDateTime startTime = bookingDto.getStart();
         LocalDateTime endTime = bookingDto.getEnd();
         if (startTime.isAfter(endTime) || startTime.isEqual(endTime)) {
-            throw new ConstraintViolationException("Incorrect endTime parameter", null);
+            throw new NotAvailableException("Incorrect endTime parameter");
         }
         Item item = itemRepository.findById(bookingDto.getItemId()).orElseThrow(() ->
                 new NotFoundException(String.format("Item with id=%d not found", bookingDto.getItemId())));

@@ -15,17 +15,9 @@ import java.time.LocalDateTime;
 @Builder
 @ToString
 public class BookingDto {
-
     private Long id;
-
-//    @Future
-//    @NotNull(groups = { ValidationMarker.OnCreate.class })
     private LocalDateTime start;
-
-//    @Future
-//    @NotNull(groups = { ValidationMarker.OnCreate.class })
     private LocalDateTime end;
-
     private ItemDto item;
     private UserDto booker;
     private BookingStatus status;

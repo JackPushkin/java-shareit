@@ -7,7 +7,6 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
-import javax.validation.ConstraintViolationException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -54,11 +53,5 @@ public class ErrorHandler {
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     public Map<String, String> illegalArgumentExceptionHandler(IllegalArgumentException e) {
         return Map.of("error", "Unknown state: UNSUPPORTED_STATUS");
-    }
-
-    @ExceptionHandler
-    @ResponseStatus(value = HttpStatus.BAD_REQUEST)
-    public ErrorResponse parameterExceptionHandler(ConstraintViolationException e) {
-        return new ErrorResponse(Map.of("Incorrect parameter", e.getMessage()));
     }
 }
